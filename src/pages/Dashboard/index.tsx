@@ -27,31 +27,13 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     async function loadFoods(): Promise<void> {
-      // TODO LOAD FOODS
+      const response = await api.get<IFoodPlate[]>('/foods');
+
+      setFoods(response.data);
     }
 
     loadFoods();
   }, []);
-
-  async function handleAddFood(
-    food: Omit<IFoodPlate, 'id' | 'available'>,
-  ): Promise<void> {
-    try {
-      // TODO ADD A NEW FOOD PLATE TO THE API
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async function handleUpdateFood(
-    food: Omit<IFoodPlate, 'id' | 'available'>,
-  ): Promise<void> {
-    // TODO UPDATE A FOOD PLATE ON THE API
-  }
-
-  async function handleDeleteFood(id: number): Promise<void> {
-    // TODO DELETE A FOOD PLATE FROM THE API
-  }
 
   function toggleModal(): void {
     setModalOpen(!modalOpen);
@@ -61,8 +43,56 @@ const Dashboard: React.FC = () => {
     setEditModalOpen(!editModalOpen);
   }
 
+  async function handleAddFood(
+    food: Omit<IFoodPlate, 'id' | 'available'>,
+  ): Promise<void> {
+    try {
+      const newFood = {
+        ...food,
+        available: true,
+      };
+
+      const response = await api.post<IFoodPlate>('/foods', newFood);
+
+      setFoods([...foods, response.data]);
+
+      toggleModal();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function handleUpdateFood(
+    food: Omit<IFoodPlate, 'id' | 'available'>,
+  ): Promise<void> {
+    try {
+      const response = await api.put<IFoodPlate>(`/foods/${editingFood.id}`, {
+        ...food,
+        available: editingFood.available,
+      });
+
+      const updatedFoods = foods.map(oldFood =>
+        oldFood.id === editingFood.id ? response.data : oldFood,
+      );
+
+      setFoods(updatedFoods);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function handleDeleteFood(id: number): Promise<void> {
+    try {
+      await api.delete(`/foods/${id}`);
+
+      setFoods(foods.filter(food => food.id !== id));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   function handleEditFood(food: IFoodPlate): void {
-    // TODO SET THE CURRENT EDITING FOOD ID IN THE STATE
+    setEditingFood(food);
   }
 
   return (
@@ -86,8 +116,9 @@ const Dashboard: React.FC = () => {
             <Food
               key={food.id}
               food={food}
-              handleDelete={handleDeleteFood}
+              handleDelete={() => handleDeleteFood(food.id)}
               handleEditFood={handleEditFood}
+              toggleEditModal={toggleEditModal}
             />
           ))}
       </FoodsContainer>

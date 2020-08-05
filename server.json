@@ -23,6 +23,22 @@
       "price": "25.90",
       "available": true,
       "image": "https://storage.googleapis.com/golden-wind/bootcamp-gostack/desafio-food/food3.png"
+    },
+    {
+      "image": "https://storage.googleapis.com/golden-wind/bootcamp-gostack/desafio-food/food1.png",
+      "name": "Molho Branco",
+      "price": "24.99",
+      "description": "Macarrão com molho branco.",
+      "available": true,
+      "id": 4
+    },
+    {
+      "image": "https://storage.googleapis.com/golden-wind/bootcamp-gostack/desafio-food/food1.png",
+      "name": "Molho Almôndega",
+      "price": "24.99",
+      "description": "Macarrão com almôndegas bovinas.",
+      "available": true,
+      "id": 5
     }
   ]
 }
